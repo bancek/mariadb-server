@@ -1243,7 +1243,7 @@ bool dispatch_command(enum enum_server_command command, THD *thd,
   DBUG_PRINT("info", ("command: %d", command));
 
 #ifdef WITH_WSREP
-  if (WSREP(thd)) {
+  if (WSREP(thd) && command != COM_STMT_CLOSE) {
     if (!thd->in_multi_stmt_transaction_mode())
     {
       thd->wsrep_PA_safe= true;
@@ -1913,7 +1913,7 @@ bool dispatch_command(enum enum_server_command command, THD *thd,
 #ifdef WITH_WSREP
  dispatch_end:
 
-  if (WSREP(thd)) {
+  if (WSREP(thd) && command != COM_STMT_CLOSE) {
     /* wsrep BF abort in query exec phase */
     mysql_mutex_lock(&thd->LOCK_wsrep_thd);
     if ((thd->wsrep_conflict_state != REPLAYING) &&
